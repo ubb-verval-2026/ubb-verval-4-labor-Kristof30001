@@ -152,6 +152,50 @@ public class PersonPageTests
         summaryValidationMessage.Text.Should().Contain("The specified percentag should be between -9 and infinity.");
     }
 
+    [Test]
+    public void BlazeDemo_MexicoCityToDublin_ShouldHaveAtLeastThreeFlights()
+    {
+        // Arrange
+        driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+        driver.Navigate().GoToUrl("https://blazedemo.com");
+
+        driver.FindElement(By.XPath("//select[@name='fromPort']/option[@value='Mexico City']")).Click();
+        driver.FindElement(By.XPath("//select[@name='toPort']/option[@value='Dublin']")).Click();
+
+        // Act
+        driver.FindElement(By.CssSelector("input[type='submit']")).Click();
+
+        // Assert
+        var flightRows = driver.FindElements(By.CssSelector("table.table tbody tr"));
+        flightRows.Count.Should().BeGreaterThanOrEqualTo(3, "because there should be at least three flights between Mexico City and Dublin");
+
+        const double thresholdPrice = 450.0;
+        var foundCheapFlight = false;
+
+        foreach (var row in flightRows)
+        {
+            var priceText = row.FindElement(By.XPath("./td[6]")).Text;
+
+            if (double.TryParse(priceText.Replace("$", string.Empty), System.Globalization.CultureInfo.InvariantCulture, out var price) &&
+                price < thresholdPrice)
+            {
+                foundCheapFlight = true;
+                break;
+            }
+        }
+
+        if (foundCheapFlight)
+        {
+            var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var fileName = $"CheapFlight_Dublin_{DateTime.Now:yyyyMMdd_HHmmss}.png";
+            var filePath = Path.Combine(desktopPath, fileName);
+
+            screenshot.SaveAsFile(filePath);
+            Console.WriteLine($"Screenshot saved to: {filePath}");
+        }
+    }
+
     private bool IsElementPresent(By by)
     {
         try
