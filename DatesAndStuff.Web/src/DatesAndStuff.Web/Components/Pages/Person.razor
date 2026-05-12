@@ -19,7 +19,8 @@
     <div class="form-group row mb-3">
         <label class="col-md-2 col-form-label">Salary increase percentage: <span class="text-danger">*</span></label>
         <div class="col-md-10">
-            <InputNumber @bind-Value="@formModel.SalaryIncreasePercentage" Placeholder="Enter a percentage value" data-test="SalaryIncreasePercentageInput" />
+            <InputNumber @bind-Value="@formModel.SalaryIncreasePercentage" Placeholder="Enter a percentage value"
+                         data-test="SalaryIncreasePercentageInput" />
             <ValidationMessage For="@(() => formModel.SalaryIncreasePercentage)" />
         </div>
     </div>
@@ -69,7 +70,7 @@
     public class FormModel
     {
         [Required(ErrorMessage = "Percentage should be specified")]
-        [Range(-10d, Double.MaxValue, ErrorMessage = "The specified percentag should be between -10 and infinity.")]
+        [Range(-9d, Double.MaxValue, ErrorMessage = "The specified percentag should be between -9 and infinity.")]
         public double SalaryIncreasePercentage { get; set; } = 0;
     }
 }
